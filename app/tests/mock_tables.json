@@ -1,0 +1,17 @@
+[
+    {
+        "name": "1",
+        "seats": 2,
+        "location": "Центр"
+    },
+    {
+        "name": "2",
+        "seats": 4,
+        "location": "Центр"
+    },
+    {
+        "name": "3",
+        "seats": 6,
+        "location": "Центр"
+    }
+]

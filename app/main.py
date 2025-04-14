@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_versioning import VersionedFastAPI
 from starlette.responses import RedirectResponse
-from uvicorn import lifespan
 
 from app.routers.tables import router as router_tables
 from app.routers.reservations import router as router_reservation
@@ -16,7 +15,7 @@ origins = [
     "http://localhost:3000",
 ]
 
-# Настройка CORS
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -31,11 +30,11 @@ app.add_middleware(
     ],
 )
 
-# Подключение роутеров
-app.include_router(router_reservation, prefix="/api", tags=["reservations"])
-app.include_router(router_tables, prefix="/api", tags=["tables"])
 
-# Подключение версионирования
+app.include_router(router_reservation, tags=["reservations"])
+app.include_router(router_tables, tags=["tables"])
+
+
 app = VersionedFastAPI(
     app,
     version_format="{major}",

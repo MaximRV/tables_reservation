@@ -5,6 +5,7 @@ class TableCreate(BaseModel):
     seats: int
     location: str
 
+
 class TableBase(TableCreate):
     id: int
     name: str

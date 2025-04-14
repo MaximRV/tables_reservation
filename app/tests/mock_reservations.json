@@ -1,0 +1,21 @@
+[
+    {
+        "customer_name": "Andrey",
+        "table_id": 1,
+        "reservation_time": "2025-04-14T16:22:42.771Z",
+        "duration_minutes": 20
+    },
+    {
+        "customer_name": "Fedor",
+        "table_id": 2,
+        "reservation_time": "2025-04-14T16:22:42.771Z",
+        "duration_minutes": 20
+    },
+    {
+        "customer_name": "Nicolai",
+        "table_id": 3,
+        "reservation_time": "2025-04-14T16:22:42.771Z",
+        "duration_minutes": 20
+    }
+]
+
