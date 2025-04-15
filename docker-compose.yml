@@ -1,122 +1,30 @@
-name: myapp
 services:
   db:
     image: postgres:16
     container_name: booking_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: booking_db
+    ports:
+      - 5432:5432
     volumes:
       - postgresdata:/var/lib/postgresql/data
-    env_file:
-      - .env-non-dev
-    ports:
-      - 5433:5432
-
-
-  redis:
-    image: redis:7
-    container_name: booking_redis
-
-
 
   booking:
     image: booking_image
     build:
       context: .
     container_name: booking_app
-    env_file:
-      - .env-non-dev
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/booking_db
     depends_on:
       - db
-      - redis
-    command: sh -c "migrations upgrade head && gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000"
+    command: sh -c "sleep 10 && alembic upgrade head && gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000"
     ports:
-      - 7777:8000
-
-
-  celery:
-    image: booking_celery
-    build:
-      context: .
-    container_name: booking_celery
-    command: sh -c "celery --app=app.tasks.celery_app:celery worker -l INFO"
-    env_file:
-      - .env-non-dev
-    depends_on:
-      - redis
-
-
-
-  celery_beat:
-    image: booking_celery
-    build:
-      context: . # celery это библиотека, у неё нет образа, берём из основного билда
-    container_name: booking_celery_beat
-    # Если не работает эта команда, используйте закомментированную
-    # command: ["/booking/docker/celery.sh", "celery_beat"] # Второй аргумен для if/elif в скрипте
-    command: sh -c "celery --app=app.tasks.celery_app:celery worker -l INFO -B"
-    env_file:
-      - .env-non-dev
-    depends_on:
-      - redis
-
-
-  flower:
-    image: booking_flower
-    build:
-      context: .
-    container_name: booking_flower
-    command: sh -c "celery --app=app.tasks.celery_app:celery flower"
-    env_file:
-      - .env-non-dev
-    depends_on:
-      - redis
-    ports:
-      - 5555:5555
-
-
-  prometheus:
-    image: prom/prometheus:v2.55.0-rc.0
-    container_name: prometheus
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheusdata:/prometheus
-    restart: unless-stopped
-    ports:
-      - 9090:9090
-
-  grafana:
-    image: grafana/grafana:9.4.7
-    container_name: grafana
-    volumes:
-      - grafanadata:/var/lib/grafana
-    restart: unless-stopped
-    ports:
-      - 3000:3000
+      - 8000:8000
 
 volumes:
   postgresdata:
-  grafanadata:
-  prometheusdata:
-
-
-
-
-#version: '3.8'
-#
-#services:
-#  web:
-#    build: .
-#    ports:
-#      - "8000:8000"
-#    depends_on:
-#      - db
-#
-#  db:
-#    image: postgres:latest
-#    environment:
-#      POSTGRES_DB: dbname
-#      POSTGRES_USER: user
-#      POSTGRES_PASSWORD: password
-#    ports:
-#      - "5432:5432"
 
 
